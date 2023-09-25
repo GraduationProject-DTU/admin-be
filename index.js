@@ -16,12 +16,8 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/hello', (req, res, next) => {
-    res.send('hello world')
-})
-
 route(app)
 
-app.listen(8000, () => {
-    console.log('Server is running Port', 8000)
+app.listen(PORT, 8000, () => {
+    console.log('Server is running Port', PORT)
 })
