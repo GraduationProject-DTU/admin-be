@@ -130,6 +130,7 @@ class ProductController {
         }
     }
 
+    //[POST]/products/rating-product
     async rateProduct(req, res) {
         try {
             const { postId, star, comment } = req.body
@@ -170,6 +171,34 @@ class ProductController {
         } catch (error) {
             return res.status(500).json({ mess: error })
         }
+    }
+
+    //[POST]/products/find
+    async findProduct(req, res) {
+        try {
+            const { productName } = req.body
+            const product = await Product.find({ title: { $regex: productName, $options: 'i' } })
+            // option 'i' => không phân biệt hoa thường
+
+
+            if (Object.keys(product).length === 0) {
+                return res.status(200).json({ mess: 'Không tìm thấy sản phẩm' })
+            }
+
+            return res.status(200).json({ product })
+        } catch (error) {
+            return res.status(500).json({ mess: error })
+        }
+    }
+
+    //[POST]/products/find-image
+    async findProductByImage(req, res) {
+        try {
+            // TO DO ...
+        } catch (error) {
+            return res.status(500).json({ mess: error })
+        }
+
     }
 }
 

@@ -4,6 +4,8 @@ const { verifyToken, isAdmin } = require('../middleware/verifyToken')
 const router = require('express').Router()
 
 router.get('/', [verifyToken, isAdmin], ProductController.getAllProducts)
+router.post('/find', ProductController.findProduct)
+router.post('find-image', ProductController.findProductByImage)
 router.post('/create-product', [verifyToken, isAdmin, uploadCloudinary.single('image')], ProductController.createProduct)
 router.put('/update-product/:id', [verifyToken, isAdmin, uploadCloudinary.single('image')], ProductController.updateProduct)
 router.delete('/delete-product/:id', [verifyToken, isAdmin], ProductController.deleteProduct)
