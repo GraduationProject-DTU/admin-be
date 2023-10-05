@@ -5,17 +5,14 @@ const jwt = require('jsonwebtoken')
 const sendMail = require('../utils/sendMail')
 require('dotenv').config()
 
-
-// Khi login thêm các refresh token vào arr 
+// Khi login thêm các refresh token vào arr
 let refreshTokens = []
-
 
 class AuthController {
     // [POST] / users/ register
     async register(req, res) {
-
         try {
-            const { email, firstname, lastname, phone, password, rePassword } = req.body
+            const { email, firstname, lastname, phone, password, rePassword, role } = req.body
 
             if (password !== rePassword) {
                 return res.status(403).json('Password not match')
@@ -24,13 +21,13 @@ class AuthController {
             const genSalt = await bcrypt.genSaltSync(10)
             const hashPassword = await bcrypt.hash(password, genSalt)
 
-
             const newUser = await new User({
                 email,
                 firstname,
                 lastname,
                 phone,
-                password: hashPassword
+                password: hashPassword,
+                role
             })
 
             const user = await newUser.save()
@@ -39,12 +36,10 @@ class AuthController {
         } catch (error) {
             res.status(500).json({ error })
         }
-
     }
 
     //[POST] /users/login
     async login(req, res) {
-
         try {
             const { email, password } = req.body
             if (!email || !password) {
@@ -52,12 +47,11 @@ class AuthController {
             }
 
             const user = await User.findOne({ email: email })
-            console.log(user);
 
             const passwordCompare = await bcrypt.compare(password, user.password)
 
             if (passwordCompare) {
-                //access token 
+                //access token
                 const access_token = jwt.sign(
                     {
                         _id: user.id,
@@ -86,9 +80,8 @@ class AuthController {
                     httpOnly: true,
                     scure: false,
                     path: '/',
-                    sameSite: "strict",
+                    sameSite: 'strict'
                 })
-
 
                 // if (refresh_token) {
                 //     await User.findByIdAndUpdate(
@@ -97,21 +90,18 @@ class AuthController {
                 //     )
                 // }
 
-
                 return res.status(200).json({
                     mess: 'Login successfully',
                     user,
                     access_token,
                     refresh_token
                 })
-
             } else {
                 return res.status(403).json({ mess: 'password is wrong' })
             }
         } catch (error) {
             res.status(500).json({ error })
         }
-
     }
 
     // REFRESH TOKEN
@@ -122,7 +112,7 @@ class AuthController {
             return res.status(401).json('you are not authenticated')
         }
 
-        if (!(refreshTokens.includes(refreshToken))) {
+        if (!refreshTokens.includes(refreshToken)) {
             return res.status(403).json('Refresh token is not valid')
         }
 
@@ -161,7 +151,7 @@ class AuthController {
                 httpOnly: true,
                 scure: false,
                 path: '/',
-                sameSite: "strict",
+                sameSite: 'strict'
             })
 
             res.status(200).json({ accessToken: newAccessToken })
@@ -170,9 +160,8 @@ class AuthController {
 
     async logout(req, res) {
         res.clearCookie('refreshToken')
-        refreshTokens = refreshTokens.filter(token => token != req.cookies.refreshToken)
+        refreshTokens = refreshTokens.filter((token) => token != req.cookies.refreshToken)
         res.status(200).json('LOGGED OUT !!')
-
     }
 
     // Client gửi email
@@ -184,7 +173,6 @@ class AuthController {
 
     async forgotPassword(req, res) {
         try {
-
             if (!req.query.email) {
                 return res.status(404).json({ mess: 'Missing email' })
             }
@@ -194,7 +182,6 @@ class AuthController {
             if (!user) {
                 return res.status(404).json({ mess: 'user not found' })
             }
-
 
             const resetToken = user.createPasswordChangeToken()
 
@@ -216,15 +203,12 @@ class AuthController {
             return res.status(200).json({
                 result
             })
-
-
         } catch (error) {
             res.status(500).json({ error: error })
         }
     }
 
     async resetPassword(req, res) {
-
         try {
             const { password, token } = req.body
 
@@ -244,8 +228,6 @@ class AuthController {
             const genSalt = await bcrypt.genSalt(10)
             const hashPassword = await bcrypt.hash(password, genSalt)
 
-
-
             user.password = hashPassword
             user.passwordResetToken = undefined
             user.passwordChangeAt = Date.now()
@@ -260,4 +242,4 @@ class AuthController {
     }
 }
 
-module.exports = new AuthController
+module.exports = new AuthController()
