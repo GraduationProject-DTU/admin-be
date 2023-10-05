@@ -29,7 +29,9 @@ var User = new mongoose.Schema(
         },
 
         role: {
-            type: String
+            type: String,
+            default: 'user'
+
         },
 
         cart: [
