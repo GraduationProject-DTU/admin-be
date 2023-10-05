@@ -13,6 +13,19 @@ class UserController {
         }
     }
 
+    //[GET]/users/:uid
+    async getUser(req, res) {
+        try {
+            const _id = req.params.uid
+
+            const user = await User.findById({ _id })
+
+            return res.status(200).json({ user })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
     //[GET]/users/history-like
     async getHistoryLikeOfUser(req, res) {
         try {

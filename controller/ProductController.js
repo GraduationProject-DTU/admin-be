@@ -5,6 +5,18 @@ require('dotenv').config()
 
 class ProductController {
 
+    //[GET]/products/:pid
+    async getProduct(req, res) {
+        try {
+            const _id = req.params.pid
+            const product = await Product.findById({ _id })
+
+            return res.status(200).json({ product })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
     // [GET] / 
     async getAllProducts(req, res) {
         try {
