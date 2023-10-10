@@ -1,6 +1,7 @@
 const slugify = require('slugify')
 const Product = require('../model/Product')
 const cloudinary = require('cloudinary')
+const tesseract = require('tesseract.js');
 require('dotenv').config()
 
 class ProductController {
@@ -206,7 +207,16 @@ class ProductController {
     //[POST]/products/find-image
     async findProductByImage(req, res) {
         try {
-            // TO DO ...
+            const { data: { text } } = await tesseract.recognize(req.file.path, 'vie')
+            const product = await Product.find({ title: { $regex: text.trim(), $options: 'i' } })
+
+
+            if (Object.keys(product).length === 0) {
+                return res.status(200).json({ mess: 'Không tìm thấy sản phẩm' })
+            }
+
+            res.status(200).json({ product })
+
         } catch (error) {
             return res.status(500).json({ mess: error })
         }
