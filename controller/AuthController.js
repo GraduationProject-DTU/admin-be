@@ -18,11 +18,11 @@ class AuthController {
             const checkEmail = users.find((e) => e.email === email)
 
             if (checkEmail) {
-                return res.status(403).json('Email already exists')
+                return res.status(403).json({ mess: 'Email already exists' })
             }
 
             if (password !== rePassword) {
-                return res.status(403).json('Password not match')
+                return res.status(403).json({ mess: 'Password not match' })
             }
 
 
