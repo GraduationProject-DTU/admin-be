@@ -16,7 +16,7 @@ class AuthController {
 
             const users = await User.find({})
             const checkEmail = users.find((e) => e.email === email)
-            console.log(checkEmail);
+
             if (checkEmail) {
                 return res.status(403).json('Email already exists')
             }
@@ -56,6 +56,9 @@ class AuthController {
             }
 
             const user = await User.findOne({ email: email })
+            if (!user) {
+                return res.status(403).json({ mess: 'email is not correct ' })
+            }
 
             const passwordCompare = await bcrypt.compare(password, user.password)
 
