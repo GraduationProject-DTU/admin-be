@@ -14,9 +14,18 @@ class AuthController {
         try {
             const { email, firstname, lastname, phone, password, rePassword, role } = req.body
 
+            const users = await User.find({})
+            const checkEmail = users.find((e) => e.email === email)
+            console.log(checkEmail);
+            if (checkEmail) {
+                return res.status(403).json('Email already exists')
+            }
+
             if (password !== rePassword) {
                 return res.status(403).json('Password not match')
             }
+
+
 
             const genSalt = await bcrypt.genSaltSync(10)
             const hashPassword = await bcrypt.hash(password, genSalt)
