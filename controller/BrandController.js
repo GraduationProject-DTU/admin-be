@@ -1,7 +1,6 @@
 const Brand = require('../model/Brand')
 
 class BlogCategoryController {
-
     //[GET] /
     async getBrands(req, res) {
         try {
@@ -9,6 +8,17 @@ class BlogCategoryController {
             res.status(200).json({ brand })
         } catch (error) {
             res.status(500).json({ mess: error })
+        }
+    }
+
+    //[GET]/brand/id
+    async getBrandById(req, res) {
+        try {
+            const _id = req.params.id
+            const brand = await Brand.findById({ _id })
+            return res.status(200).json({ brand })
+        } catch (error) {
+            return res.status(500).json({ error })
         }
     }
 
@@ -22,7 +32,6 @@ class BlogCategoryController {
             const brand = await new Brand(req.body)
             await brand.save()
             res.status(200).json({ brand })
-
         } catch (error) {
             res.status(500).json({ mess: error })
         }
@@ -54,4 +63,4 @@ class BlogCategoryController {
     }
 }
 
-module.exports = new BlogCategoryController
+module.exports = new BlogCategoryController()
