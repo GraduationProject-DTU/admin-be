@@ -46,9 +46,10 @@ var Blog = new mongoose.Schema({
         }
     ],
 
-    image: {
-        type: String,
-        default: 'https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-6/354608660_5965369353573224_4477435290304714523_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=8bfeb9&_nc_ohc=jK_2Ae9WxwcAX9Mcldj&_nc_ht=scontent.fhan14-3.fna&oh=00_AfCd5tCuZ3_-pAz0kToS4hwSLM5UNk3rTB6L2H7D0aq2UA&oe=6497F4C5'
+    images: {
+        type: Array,
+        default: []
+        // default: 'https://th.bing.com/th/id/R.5f50d860e5f82462d3655d238dec4d18?rik=AUIfoBxInwYlsw&pid=ImgRaw&r=0'
     },
 
     author: {

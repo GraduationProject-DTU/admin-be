@@ -1,5 +1,6 @@
 const Blog = require('../model/Blog')
 const User = require('../model/User')
+const cloudinary = require('cloudinary')
 
 class BlogController {
 
@@ -47,20 +48,27 @@ class BlogController {
     //[POST] /blogs/create-blog
     async createBlog(req, res) {
         try {
+            req.body.images = []
+
             console.log(req.body);
             if (Object.keys(req.body).length === 0) {
-                if (req.file) {
-                    cloudinary.uploader.destroy(req.file.filename, (err, result) => {
-                        if (err) {
-                            console.log({ err: err })
-                        }
-                    })
+                if (req.files) {
+                    for (let i = 0; i < req.files.length; i++) {
+                        console.log(req.files[i].filename)
+                        cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
+                            if (err) {
+                                console.log({ 'err': err })
+                            }
+                        })
+                    }
                 }
                 return res.status(400).json('Missing inputs')
             }
 
-            if (req.file) {
-                req.body.image = req.file.path
+            if (req.files) {
+                for (let i = 0; i < req.files.length; i++) {
+                    req.body.images.push(req.files[i].path)
+                }
             }
 
             const blog = new Blog(req.body)
@@ -69,12 +77,14 @@ class BlogController {
             return res.status(200).json({ mess: 'Create successfully', blog })
 
         } catch (error) {
-            if (req.file) {
-                cloudinary.uploader.destroy(req.file.filename, (err, result) => {
-                    if (err) {
-                        console.log({ err: err })
-                    }
-                })
+            if (req.files) {
+                for (let i = 0; i < req.files.length; i++) {
+                    cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
+                        if (err) {
+                            console.log({ err: err })
+                        }
+                    })
+                }
             }
             return res.status(500).json({ mess: error })
         }
@@ -83,32 +93,46 @@ class BlogController {
     //[PUT]/blogs//update-blog/:id
     async updateBlog(req, res) {
         try {
-            const { id } = req.params
-            if (Object.keys(req.body).length === 0 && !req.file) {
+            req.body.images = []
 
-                cloudinary.uploader.destroy(req.file.filename, (err, result) => {
-                    if (err) {
-                        console.log({ err: err })
+            if (Object.keys(req.body).length === 0 && !req.file) {
+                if (req.files) {
+                    for (let i = 0; i < req.files.length; i++) {
+                        console.log(req.files[i].filename)
+                        cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
+                            if (err) {
+                                console.log({ 'err': err })
+                            }
+                        })
                     }
-                })
+                }
 
                 return res.status(400).json('Missing inputs')
             }
 
-            if (req.file) {
-                req.body.image = req.file.path
+            // if (req.files) {
+            //     req.body.image = req.file.path
+            // }
+
+            if (req.files) {
+                for (let i = 0; i < req.files.length; i++) {
+                    req.body.images.push(req.files[i].path)
+                }
             }
 
             await Blog.findByIdAndUpdate({ _id: req.params.id }, req.body)
 
             res.status(200).json({ mess: 'Update successfully' })
         } catch (error) {
-            if (req.file) {
-                cloudinary.uploader.destroy(req.file.filename, (err, result) => {
-                    if (err) {
-                        console.log({ err: err })
-                    }
-                })
+            if (req.files) {
+                for (let i = 0; i < req.files.length; i++) {
+                    console.log(req.files[i].filename)
+                    cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
+                        if (err) {
+                            console.log({ 'err': err })
+                        }
+                    })
+                }
             }
             res.status(500).json({ mess: error })
         }
