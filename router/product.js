@@ -3,7 +3,7 @@ const uploadCloudinary = require('../middleware/uploader')
 const { verifyToken, isAdmin } = require('../middleware/verifyToken')
 const router = require('express').Router()
 
-router.get('/', [verifyToken, isAdmin], ProductController.getAllProducts)
+router.get('/', ProductController.getAllProducts)
 router.get('/:pid', verifyToken, ProductController.getProduct)
 router.post('/find', ProductController.findProduct)
 router.post('/find-image', uploadCloudinary.single('image'), ProductController.findProductByImage)
