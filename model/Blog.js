@@ -42,7 +42,8 @@ var Blog = new mongoose.Schema({
                 type: mongoose.Types.ObjectId,
                 ref: 'User',
             },
-            content: String
+            content: String,
+            date: String
         }
     ],
 

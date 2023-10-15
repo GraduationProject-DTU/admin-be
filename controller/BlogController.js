@@ -21,6 +21,15 @@ class BlogController {
             const blog = await Blog.findByIdAndUpdate({ _id: blogId }, { $inc: { numberViews: 1 } })
                 .populate({ path: 'likes', select: 'lastname' })
                 .populate({ path: 'disLikes', select: 'lastname' })
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'userId',
+                        select: 'firstname lastname'
+                    }
+                })
+
+            // .populate({ path: 'userId', select: 'lastname' })
 
             res.status(200).json({ blog })
         } catch (error) {
@@ -224,9 +233,15 @@ class BlogController {
             const { bid, comment } = req.body
             const { _id } = req.user
 
+            let date = new Date()
+            let day = date.getDate()
+            let month = date.getMonth() + 1
+            let year = date.getFullYear()
+            let formattedDate = day + '/' + month + '/' + year
+
             await Blog.findByIdAndUpdate(
                 { _id: bid },
-                { $push: { comments: { userId: _id, content: comment } } }
+                { $push: { comments: { userId: _id, content: comment, date: formattedDate } } }
             )
 
             res.status(200).json({ mess: 'comment successfully!!' })
