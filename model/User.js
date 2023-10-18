@@ -8,6 +8,11 @@ var User = new mongoose.Schema(
             required: true
         },
 
+        avatar: {
+            type: String,
+            default: 'https://i.pinimg.com/736x/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg'
+        },
+
         lastname: {
             type: String,
             required: true

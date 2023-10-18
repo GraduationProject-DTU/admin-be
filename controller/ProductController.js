@@ -10,6 +10,11 @@ class ProductController {
         try {
             const _id = req.params.pid
             const product = await Product.findById({ _id })
+                .populate({
+                    path: 'ratings',
+                    populate: { path: 'postedBy', select: 'firstname lastname avatar' }
+                })
+
 
             return res.status(200).json({ product })
         } catch (error) {
@@ -153,7 +158,10 @@ class ProductController {
                 )
             } else {
                 // add new star and comment
-                await Product.findByIdAndUpdate(postId, { $push: { ratings: { postedBy: _id, star, comment } } })
+                await Product.findByIdAndUpdate(
+                    postId,
+                    { $push: { ratings: { postedBy: _id, star, comment } } }
+                )
             }
 
             // sum star
