@@ -46,6 +46,13 @@ class BlogController {
                 { _id: req.params.id },
                 { $inc: { numberViews: 1 } }
             )
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'userId',
+                        select: 'firstname lastname'
+                    }
+                })
 
             res.status(200).json({ blog })
         } catch (error) {
@@ -239,12 +246,19 @@ class BlogController {
             let year = date.getFullYear()
             let formattedDate = day + '/' + month + '/' + year
 
-            await Blog.findByIdAndUpdate(
+            const blog = await Blog.findByIdAndUpdate(
                 { _id: bid },
                 { $push: { comments: { userId: _id, content: comment, date: formattedDate } } }
-            )
+            ).populate({
+                path: 'comments',
+                populate: {
+                    path: 'userId',
+                    select: 'firstname lastname'
+                }
+            }).select('comments')
 
-            res.status(200).json({ mess: 'comment successfully!!' })
+            console.log(blog)
+            res.status(200).json({ mess: 'comment successfully!!', data: blog })
         } catch (error) {
             res.status(500).json({ mess: error })
         }
