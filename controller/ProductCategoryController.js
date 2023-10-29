@@ -1,4 +1,5 @@
 const ProductCategory = require('../model/ProductCategory')
+const Product = require("../model/Product");
 
 class ProductCategoryController {
 
@@ -9,6 +10,18 @@ class ProductCategoryController {
             res.status(200).json({ category })
         } catch (error) {
             res.status(500).json({ mess: error })
+        }
+    }
+
+    //[GET]/category-products/:pid
+    async getCategoryProductById(req, res) {
+        try {
+            const _id = req.params.pid
+            const category = await ProductCategory.findById({ _id })
+
+            return res.status(200).json({ category })
+        } catch (error) {
+            return res.status(500).json({ error })
         }
     }
 

@@ -1,7 +1,6 @@
 const BlogCategory = require('../model/BlogCategory')
 
 class BlogCategoryController {
-
     //[GET] /category-bogs
     async getCategoryBlogs(req, res) {
         try {
@@ -9,6 +8,18 @@ class BlogCategoryController {
             res.status(200).json({ category })
         } catch (error) {
             res.status(500).json({ mess: error })
+        }
+    }
+
+    //[GET]/category-blog/:pid
+    async getCategoryBlogById(req, res) {
+        try {
+            const _id = req.params.pid
+            const category = await BlogCategory.findById({ _id })
+
+            return res.status(200).json({ category })
+        } catch (error) {
+            return res.status(500).json({ error })
         }
     }
 
@@ -22,7 +33,6 @@ class BlogCategoryController {
             const category = await new BlogCategory(req.body)
             await category.save()
             res.status(200).json({ category })
-
         } catch (error) {
             res.status(500).json({ mess: error })
         }
@@ -54,4 +64,4 @@ class BlogCategoryController {
     }
 }
 
-module.exports = new BlogCategoryController
+module.exports = new BlogCategoryController()
