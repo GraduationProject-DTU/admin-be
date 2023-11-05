@@ -3,7 +3,7 @@ const { verifyToken, isAdmin } = require('../middleware/verifyToken')
 const router = require('express').Router()
 
 router.get('/', [verifyToken, isAdmin], UserController.getAllUsers)
-router.get('/detail-user/:id', verifyToken, UserController.getUserById)
+router.get('/detail-user', verifyToken, UserController.getUserById)
 router.get('/history-like', [verifyToken], UserController.getHistoryLikeOfUser)
 router.get('/wish-list', verifyToken, UserController.getWishList)
 router.post('/wish-list', verifyToken, UserController.addWishList)

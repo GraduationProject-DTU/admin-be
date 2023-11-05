@@ -1,4 +1,5 @@
 const User = require('../model/User')
+const Product = require('../model/Product')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 class UserController {
@@ -14,11 +15,10 @@ class UserController {
         }
     }
 
-    //[GET]/user/id
+    //[GET]/user/detail-user
     async getUserById(req, res) {
         try {
-            const _id = req.params.id
-            const user = await User.findById({ _id })
+            const user = await User.findById({ _id: req.user._id })
             return res.status(200).json({ user })
         } catch (error) {
             return res.status(500).json({ error })
@@ -106,6 +106,18 @@ class UserController {
         try {
             await User.deleteOne({ _id: req.params.id })
             res.status(200).json({ mess: 'Delete user successfully !' })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+    //[POST]/add-cart/:id
+    async addCart(req, res) {
+        const { pid } = req.body
+        try {
+            const cart = await Product.findById({ _id: pid })
+
+            console.log(cart);
         } catch (error) {
             return res.status(500).json({ error })
         }
