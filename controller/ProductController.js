@@ -26,7 +26,9 @@ class ProductController {
     async getAllProducts(req, res) {
         try {
             const queries = { ...req.query }
-            const sort = req.query.sort
+            const sortName = req.query.sort
+            const type = req.query.type
+
             let product
 
             //PAGINATION
@@ -46,16 +48,20 @@ class ProductController {
                 product = await Product.find(queryObject).skip(skip).limit(limit)
             }
 
-            // sort title
-            if (sort) {
-                product = await Product.find(queryObject).sort(sort).skip(skip).limit(limit)
+            // sort 
+            if (sortName && type) {
+                console.log(sortName);
+                product = await Product.find({}).sort({ [sortName]: type }).skip(skip).limit(limit)
             }
+
+
 
             res.status(200).json({
                 record: product.length,
                 page: page,
                 mess: product
             })
+
         } catch (error) {
             return res.status(500).json({ mess: error })
         }
@@ -119,7 +125,7 @@ class ProductController {
             await Product.findByIdAndUpdate({ _id: req.params.id }, req.body)
             res.status(200).json({ mess: 'update successfully', Product })
         } catch (error) {
-            if (req.file.path) {
+            if (req.file?.path) {
                 cloudinary.uploader.destroy(req.file.filename, (err, result) => {
                     if (err) {
                         console.log({ err: err })
