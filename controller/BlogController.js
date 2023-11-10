@@ -106,6 +106,29 @@ class BlogController {
         }
     }
 
+    // [POST]/blogs/upload-cke
+    async uploadCke(req, res) {
+        try {
+            if (req.file) {
+                return res.status(200).json({ path: req.file?.path })
+            } else {
+                cloudinary.uploader.destroy(req.files.filename, (err, result) => {
+                    if (err) {
+                        console.log({ err: err })
+                    }
+                })
+                return res.status(500).json({ mess: 'missing file image' })
+            }
+        } catch (error) {
+            cloudinary.uploader.destroy(req.file.filename, (err, result) => {
+                if (err) {
+                    console.log({ err: err })
+                }
+            })
+            return res.status(500).json({ mess: error })
+        }
+    }
+
     //[PUT]/blogs//update-blog/:id
     async updateBlog(req, res) {
         try {

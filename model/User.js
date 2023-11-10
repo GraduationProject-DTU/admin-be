@@ -70,6 +70,13 @@ var User = new mongoose.Schema(
             }
         ],
 
+        purchased: {
+            pid: {
+                type: mongoose.Types.ObjectId,
+                ref: 'Product'
+            }
+        },
+
         refresh_token: {
             type: String
         },
