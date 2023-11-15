@@ -209,8 +209,19 @@ class ProductController {
         try {
             const {
                 data: { text }
-            } = await tesseract.recognize(req.file.path, 'vie')
-            const product = await Product.find({ title: { $regex: text.trim(), $options: 'i' } })
+            } = await tesseract.recognize(req.file.path, 'eng')
+
+            const clearText = text.replace(/[^\w\s]/gi, '')
+            let productName = ''
+            for (let i = 0; i < 10; i++) {
+                if (clearText[i] !== '\n' && clearText[i] !== ' ') {
+                    productName += clearText[i]
+                } else {
+                    break
+                }
+            }
+
+            const product = await Product.find({ title: { $regex: productName.trim(), $options: 'i' } })
 
             if (Object.keys(product).length === 0) {
                 return res.status(200).json({ mess: 'Không tìm thấy sản phẩm' })
