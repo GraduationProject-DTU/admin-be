@@ -1,14 +1,21 @@
 const Blog = require('../model/Blog')
 const User = require('../model/User')
 const cloudinary = require('cloudinary')
+require('dotenv').config()
 
 class BlogController {
 
+    //skip , limit 
     //[GET] /blogs/
     async getBlogs(req, res) {
         try {
-            const blog = await Blog.find()
-            res.status(200).json({ blog })
+            //PAGINATION
+            const page = req.query.page
+            const limit = process.env.LIMIT
+            const skip = page * limit - limit
+
+            const blog = await Blog.find().skip(skip).limit(limit)
+            res.status(200).json({ recordTotal: blog.length, blog })
         } catch (error) {
             res.status(500).json({ mess: error })
         }
