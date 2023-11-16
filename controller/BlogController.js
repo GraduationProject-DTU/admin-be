@@ -14,8 +14,14 @@ class BlogController {
             const limit = process.env.LIMIT
             const skip = page * limit - limit
 
-            const blog = await Blog.find().skip(skip).limit(limit)
-            res.status(200).json({ recordTotal: blog.length, blog })
+            const totalPage = await Blog.find()
+            const blogs = await Blog.find().skip(skip).limit(limit)
+
+            res.status(200).json({
+                pageTotal: Math.ceil(totalPage.length / limit),
+                recordTotal: blogs.length,
+                blogs
+            })
         } catch (error) {
             res.status(500).json({ mess: error })
         }
@@ -41,6 +47,35 @@ class BlogController {
             res.status(200).json({ blog })
         } catch (error) {
             res.status(500).json({ mess: error })
+        }
+    }
+
+    //[POST]/blogs/find
+    async findBlog(req, res) {
+        try {
+            const { blogName } = req.body
+
+            //pagination
+            const page = req.query.page
+            const limit = process.env.LIMIT
+            const skip = page * limit - limit
+
+            const blog = await Blog
+                .find({ title: { $regex: blogName, $options: 'i' } })
+                .limit(limit)
+                .skip(skip)
+            // option 'i' => không phân biệt hoa thường
+
+            if (Object.keys(blog).length === 0) {
+                return res.status(200).json({ mess: 'Không tìm thấy bài viết' })
+            }
+
+            return res.status(200).json({
+                recordTotal: blog.length,
+                blog
+            })
+        } catch (error) {
+            return res.status(500).json({ mess: error })
         }
     }
 
