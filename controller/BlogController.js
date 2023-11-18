@@ -15,7 +15,11 @@ class BlogController {
             const skip = page * limit - limit
 
             const totalPage = await Blog.find()
-            const blogs = await Blog.find().skip(skip).limit(limit)
+            const blogs = await Blog
+                .find()
+                .skip(skip)
+                .limit(limit)
+                .populate({ path: 'category', select: 'title' })
 
             res.status(200).json({
                 pageTotal: Math.ceil(totalPage.length / limit),

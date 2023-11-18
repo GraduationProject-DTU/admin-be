@@ -45,13 +45,20 @@ class ProductController {
 
             // filter price
             if (queryObject) {
-                product = await Product.find(queryObject).skip(skip).limit(limit)
+                product = await Product.find(queryObject)
+                    .skip(skip)
+                    .limit(limit)
+                    .populate({ path: 'category', select: 'title' })
             }
 
             // sort 
             if (sortName && type) {
                 console.log(sortName);
-                product = await Product.find({}).sort({ [sortName]: type }).skip(skip).limit(limit)
+                product = await Product
+                    .find({})
+                    .sort({ [sortName]: type })
+                    .skip(skip).limit(limit)
+                    .populate({ path: 'category', select: 'title' })
             }
 
 

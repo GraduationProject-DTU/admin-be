@@ -23,9 +23,8 @@ var Product = new mongoose.Schema({
         required: true
     },
     category: {
-        // type: mongoose.Types.ObjectId,
-        // ref: 'ProductCategory'
-        type: String
+        type: mongoose.Types.ObjectId,
+        ref: 'ProductCategory'
     },
     quantity: {
         type: Number,
