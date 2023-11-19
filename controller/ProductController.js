@@ -43,17 +43,15 @@ class ProductController {
             queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
             const queryObject = JSON.parse(queryString)
 
+
             // filter price
             if (queryObject) {
                 product = await Product.find(queryObject)
-                    .skip(skip)
-                    .limit(limit)
                     .populate({ path: 'category', select: 'title' })
             }
 
             // sort 
             if (sortName && type) {
-                console.log(sortName);
                 product = await Product
                     .find({})
                     .sort({ [sortName]: type })
@@ -61,10 +59,9 @@ class ProductController {
                     .populate({ path: 'category', select: 'title' })
             }
 
-
-
             res.status(200).json({
                 record: product.length,
+                pageTotal: Math.ceil(product.length / limit),
                 page: page,
                 mess: product
             })
