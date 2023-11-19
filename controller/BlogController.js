@@ -13,19 +13,32 @@ class BlogController {
             const page = req.query.page
             const limit = process.env.LIMIT
             const skip = page * limit - limit
+            let blogs
 
-            const totalPage = await Blog.find()
-            const blogs = await Blog
-                .find()
-                .skip(skip)
-                .limit(limit)
-                .populate({ path: 'category', select: 'title' })
+            if (page) {
+                const totalPage = await Blog.find()
+                blogs = await Blog
+                    .find()
+                    .skip(skip)
+                    .limit(limit)
+                // .populate({ path: 'category', select: 'title' })
 
-            res.status(200).json({
-                pageTotal: Math.ceil(totalPage.length / limit),
-                recordTotal: blogs.length,
-                blogs
-            })
+                return res.status(200).json({
+                    pageTotal: Math.ceil(totalPage.length / limit),
+                    recordTotal: blogs.length,
+                    blogs
+                })
+            } else {
+                console.log('demo');
+                blogs = await Blog.find()
+
+                return res.status(200).json({
+                    recordTotal: blogs.length,
+                    blogs
+                })
+            }
+
+
         } catch (error) {
             res.status(500).json({ mess: error })
         }
