@@ -78,7 +78,10 @@ class UserController {
             }
 
             await User.findByIdAndUpdate(_id, req.body)
-            res.status(200).json({ mess: 'update user successfully !' })
+            // res about new data of user
+            const data = await User.findById({ _id })
+
+            res.status(200).json({ mess: 'update user successfully !', data })
         } catch (error) {
             return res.status(500).json({ error })
         }
@@ -94,8 +97,10 @@ class UserController {
             const genSalt = await bcrypt.genSaltSync(10)
             req.body.password = await bcrypt.hash(password, genSalt)
 
-            await User.findByIdAndUpdate(req.params.id, req.body)
-            res.status(200).json({ mess: 'update user successfully !' })
+            const user = await User.findByIdAndUpdate(req.params.id, req.body)
+            // res about new data of user
+            const data = await User.findById({ _id: req.params.id })
+            res.status(200).json({ mess: 'update user successfully !', data })
         } catch (error) {
             return res.status(500).json({ error })
         }
