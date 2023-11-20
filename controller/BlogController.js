@@ -21,7 +21,7 @@ class BlogController {
                     .find()
                     .skip(skip)
                     .limit(limit)
-                // .populate({ path: 'category', select: 'title' })
+                    .populate({ path: 'category', select: 'title' })
 
                 return res.status(200).json({
                     pageTotal: Math.ceil(totalPage.length / limit),
@@ -31,6 +31,7 @@ class BlogController {
             } else {
                 console.log('demo');
                 blogs = await Blog.find()
+                    .populate({ path: 'category', select: 'title' })
 
                 return res.status(200).json({
                     recordTotal: blogs.length,
@@ -58,6 +59,7 @@ class BlogController {
                         select: 'firstname lastname'
                     }
                 })
+            // .populate({ path: 'category', select: 'title' })
 
             // .populate({ path: 'userId', select: 'lastname' })
 
@@ -112,6 +114,7 @@ class BlogController {
                         select: 'firstname lastname'
                     }
                 })
+                .populate({ path: 'category', select: 'title' })
 
             res.status(200).json({ blog })
         } catch (error) {
