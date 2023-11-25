@@ -44,14 +44,27 @@ class ProductController {
             const queryObject = JSON.parse(queryString)
 
 
+
+            if (!queryObject.length && !sortName && !type && !page) {
+                product = await Product.find()
+
+                return res.status(200).json({
+                    record: product.length,
+                    mess: product
+                })
+            }
+
             // filter price
             if (queryObject) {
                 product = await Product.find(queryObject)
                     .populate({ path: 'category', select: 'title' })
+                    .skip(skip)
+                    .limit(limit)
             }
 
             // sort 
             if (sortName && type) {
+                console.log('sort');
                 product = await Product
                     .find({})
                     .sort({ [sortName]: type })

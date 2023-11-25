@@ -1,4 +1,5 @@
 const Coupon = require('../model/Coupon')
+const Product = require('../model/Product')
 
 class CouponController {
 
@@ -7,6 +8,28 @@ class CouponController {
         try {
             const coupon = await Coupon.find()
             res.status(200).json({ coupon })
+        } catch (error) {
+            res.status(500).json({ mess: error })
+        }
+    }
+
+    //post
+    async applyCoupon(req, res) {
+        try {
+            const { coupon, pid } = req.body
+            const product = await Product.findById({ _id: pid })
+            let couponPrice = 0
+            if (coupon.include(' 3%')) {
+                couponPrice += product.price - product.price * 0.03
+            } else if (coupon.include(' 5%')) {
+                couponPrice += product.price - product.price * 0.05
+            } else if (coupon.include('10%')) {
+                couponPrice += product.price - product.price * 0.1
+            } else {
+                couponPrice += product.price
+            }
+
+            return res.status(200).json({ couponPrice })
         } catch (error) {
             res.status(500).json({ mess: error })
         }
