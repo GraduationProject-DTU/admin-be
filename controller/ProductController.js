@@ -47,6 +47,7 @@ class ProductController {
 
             if (!queryObject.length && !sortName && !type && !page) {
                 product = await Product.find()
+                    .populate({ path: 'category', select: 'title' })
 
                 return res.status(200).json({
                     record: product.length,

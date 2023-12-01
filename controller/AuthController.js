@@ -184,12 +184,13 @@ class AuthController {
     // Change password
 
     async forgotPassword(req, res) {
+        const { email } = req.body
         try {
-            if (!req.query.email) {
+            if (!email) {
                 return res.status(404).json({ mess: 'Missing email' })
             }
 
-            const user = await User.findOne({ email: req.query.email })
+            const user = await User.findOne({ email })
 
             if (!user) {
                 return res.status(404).json({ mess: 'user not found' })
@@ -206,7 +207,7 @@ class AuthController {
             `
 
             const data = {
-                email: req.query.email,
+                email,
                 html
             }
 
