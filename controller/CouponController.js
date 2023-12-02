@@ -17,12 +17,11 @@ class CouponController {
     async applyCoupon(req, res) {
         try {
             const { coupon, pid } = req.body
-            if (coupon) {
-                const product = await Product.findById({ _id: pid })
+            const coupons = await Coupon.find()
+            if (coupons && coupon) {
                 var string = coupon.split(' ')[1]
                 var number = parseInt(string)
-                let couponPrice = 0
-                couponPrice += product.price - product.price * (number / 100)
+                let couponPrice = number / 100
                 return res.status(200).json({ couponPrice })
             } else {
                 return res.status(200).json({ mess: 'Mã giảm giá không hợp lệ' })
