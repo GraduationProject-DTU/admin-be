@@ -17,19 +17,16 @@ class CouponController {
     async applyCoupon(req, res) {
         try {
             const { coupon, pid } = req.body
-            const product = await Product.findById({ _id: pid })
-            let couponPrice = 0
-            if (coupon.include(' 3%')) {
-                couponPrice += product.price - product.price * 0.03
-            } else if (coupon.include(' 5%')) {
-                couponPrice += product.price - product.price * 0.05
-            } else if (coupon.include('10%')) {
-                couponPrice += product.price - product.price * 0.1
+            if (coupon) {
+                const product = await Product.findById({ _id: pid })
+                var string = coupon.split(' ')[1]
+                var number = parseInt(string)
+                let couponPrice = 0
+                couponPrice += product.price - product.price * (number / 100)
+                return res.status(200).json({ couponPrice })
             } else {
-                couponPrice += product.price
+                return res.status(200).json({ mess: 'Mã giảm giá không hợp lệ' })
             }
-
-            return res.status(200).json({ couponPrice })
         } catch (error) {
             res.status(500).json({ mess: error })
         }
