@@ -118,6 +118,18 @@ class OrderController {
             return res.status(500).json({ mess: error })
         }
     }
+
+    //[DELETE] 
+    async deleteOrder(req, res) {
+        try {
+            const { oid } = req.params
+
+            await Order.findByIdAndDelete({ _id: oid })
+            return res.status(200).json({ mess: 'Delete Successfully' })
+        } catch (error) {
+            return res.status(500).json({ mess: error })
+        }
+    }
 }
 
 module.exports = new OrderController
