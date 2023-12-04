@@ -65,17 +65,18 @@ class ProductController {
 
             // sort 
             if (sortName && type) {
-                console.log('sort');
                 product = await Product
                     .find({})
                     .sort({ [sortName]: type })
                     .skip(skip).limit(limit)
                     .populate({ path: 'category', select: 'title' })
             }
+            const productLength = await Product.find({})
+
 
             res.status(200).json({
                 record: product.length,
-                pageTotal: Math.ceil(product.length / limit),
+                pageTotal: Math.ceil(productLength.length / limit),
                 page: page,
                 mess: product
             })
