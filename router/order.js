@@ -4,6 +4,7 @@ const router = require('express').Router()
 
 router.get('/', verifyToken, OrderController.getOrders)
 router.post('/', verifyToken, OrderController.createOrder)
+router.post('/placeOrders', verifyToken, OrderController.placeOrders)
 router.put('/update-status/:oid', [verifyToken, isAdmin], OrderController.updateStatus)
 
 

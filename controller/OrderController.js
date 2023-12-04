@@ -9,9 +9,57 @@ class OrderController {
     async getOrders(req, res) {
         try {
             const order = await Order.find({})
+                .populate({ path: 'products', select: 'title price' })
+                .populate({ path: 'orderBy', select: 'firstname lastname email phone adress' })
             return res.status(200).json({ order })
         } catch (error) {
             return res.status(500).json({ mess: error })
+        }
+    }
+
+    // [POST]/order/placeOrders
+    // async placeOrders(req, res) {
+    //     try {
+    //         const { pid, total } = req.body
+    //         const { _id } = req.user
+
+    //         const product = await Product.findById({ _id: pid })
+
+    //         const order = new Order({ products: product._id, orderBy: _id })
+    //         await order.save()
+
+    //         return res.status(200).json({ mess: 'Create successfully' })
+    //     } catch (error) {
+    //         return res.status(500).json({ mess: error })
+    //     }
+    // }
+
+    async placeOrders(req, res) {
+        try {
+            const orders = req.body
+            const { _id } = req.user
+            let productContain = []
+            let price = 0
+
+            const orderPromises = orders.map(async (order) => {
+                const { pid } = order
+
+                const product = await Product.findById({ _id: pid })
+                productContain.push(pid)
+                price = price + product.price
+
+            });
+
+
+            await Promise.all(orderPromises)
+
+            const newOrder = new Order({ products: productContain, orderBy: _id, total: price })
+            await newOrder.save()
+
+
+            return res.status(200).json({ mess: 'Create successfully' })
+        } catch (error) {
+            return res.status(500).json({ mess: error });
         }
     }
 
