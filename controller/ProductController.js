@@ -33,7 +33,7 @@ class ProductController {
 
             //PAGINATION
             const page = req.query.page
-            const limit = process.env.LIMIT
+            const limit = 9
             const skip = page * limit - limit
 
             // Trừ 2 query page và sort

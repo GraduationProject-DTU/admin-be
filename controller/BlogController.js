@@ -29,7 +29,6 @@ class BlogController {
                     blogs
                 })
             } else {
-                console.log('demo');
                 blogs = await Blog.find()
                     .populate({ path: 'category', select: 'title' })
 
