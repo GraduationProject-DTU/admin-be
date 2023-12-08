@@ -9,7 +9,12 @@ class OrderController {
     async getOrders(req, res) {
         try {
             const order = await Order.find({})
-                .populate({ path: 'products', select: 'title price' })
+                .populate({
+                    path: 'products',
+                    populate: {
+                        path: 'product', select: 'title price'
+                    }
+                })
                 .populate({ path: 'orderBy', select: 'firstname lastname email phone adress' })
             return res.status(200).json({ order })
         } catch (error) {
@@ -42,16 +47,17 @@ class OrderController {
             let price = 0
 
             const orderPromises = orders.map(async (order) => {
-                const { pid } = order
+                const { pid, quatity } = order
 
                 const product = await Product.findById({ _id: pid })
-                productContain.push(pid)
+                productContain.push({ product: pid, quatity })
                 price = price + product.price
 
             });
 
 
             await Promise.all(orderPromises)
+            console.log(productContain);
 
             const newOrder = new Order({ products: productContain, orderBy: _id, total: price })
             await newOrder.save()
