@@ -2,6 +2,7 @@ const slugify = require('slugify')
 const Product = require('../model/Product')
 const cloudinary = require('cloudinary')
 const tesseract = require('tesseract.js')
+const Order = require('../model/Order')
 require('dotenv').config()
 
 class ProductController {
@@ -171,8 +172,23 @@ class ProductController {
             const { postId, star, comment } = req.body
             const { _id } = req.user
 
+
+            // Check người dùng mua mới được rate
+            const orders = await Order.find({})
+            const userOrdered = orders.find(e => (e.orderBy?._id.toString() === _id))
+            const userPurchased = userOrdered?.products.find(e => e.toString() === postId)
+
+
+
             const product = await Product.findById({ _id: postId })
             const readyRating = product?.ratings?.find((e) => e?.postedBy.toString() === _id)
+
+            if (!userOrdered || !userPurchased) {
+                return res.status(400).json({
+                    mess: 'You are not allowed to rate',
+                })
+            }
+
 
             if (readyRating) {
                 // Update star and comment
