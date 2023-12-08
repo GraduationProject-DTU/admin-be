@@ -51,13 +51,12 @@ class OrderController {
 
                 const product = await Product.findById({ _id: pid })
                 productContain.push({ product: pid, quatity })
-                price = price + product.price
+                price = price + product.price * quatity
 
             });
 
 
             await Promise.all(orderPromises)
-            console.log(productContain);
 
             const newOrder = new Order({ products: productContain, orderBy: _id, total: price })
             await newOrder.save()

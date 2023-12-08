@@ -176,7 +176,8 @@ class ProductController {
             // Check người dùng mua mới được rate
             const orders = await Order.find({})
             const userOrdered = orders.find(e => (e.orderBy?._id.toString() === _id))
-            const userPurchased = userOrdered?.products.find(e => e.toString() === postId)
+            const userPurchased = userOrdered?.products.find(e => e?.product._id.toString() === postId)
+
 
 
 
