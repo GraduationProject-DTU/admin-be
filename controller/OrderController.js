@@ -39,12 +39,25 @@ class OrderController {
     //     }
     // }
 
+
     async placeOrders(req, res) {
         try {
             const orders = req.body
+            const payment = req.body.payment
             const { _id } = req.user
             let productContain = []
             let price = 0
+
+            // tao code bill
+            let characters = '0123456789';
+            let code = 'INV-';
+
+            for (let i = 0; i < 8; i++) {
+                var randomIndex = Math.floor(Math.random() * characters.length);
+                code += characters.charAt(randomIndex);
+            }
+
+
 
             const orderPromises = orders.map(async (order) => {
                 const { pid, quatity } = order
@@ -58,7 +71,7 @@ class OrderController {
 
             await Promise.all(orderPromises)
 
-            const newOrder = new Order({ products: productContain, orderBy: _id, total: price })
+            const newOrder = new Order({ products: productContain, codeBill: code, payments: payment, orderBy: _id, total: price })
             await newOrder.save()
 
 

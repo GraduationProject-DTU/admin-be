@@ -13,6 +13,16 @@ var Order = new mongoose.Schema({
         default: 0
     },
 
+    payments: {
+        type: String,
+        default: 'Thanh Toán Khi Nhận Hàng',
+        enum: ['Thanh Toán Khi Nhận Hàng', 'Chuyển khoản',]
+    },
+
+    codeBill: {
+        type: String,
+    },
+
     products: [{
         product: {
             type: mongoose.Types.ObjectId,
@@ -20,7 +30,6 @@ var Order = new mongoose.Schema({
         },
         quatity: String
     }],
-
 
 
     orderBy: {
