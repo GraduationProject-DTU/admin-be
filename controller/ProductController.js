@@ -223,11 +223,21 @@ class ProductController {
         }
     }
 
+    // async deleteCommentProduct (req ,req) {
+    //     const {pid , }
+    //     try {
+
+    //     } catch (error) {
+
+    //     }
+    // }
+
     //[POST]/products/find
     async findProduct(req, res) {
         try {
             const { productName } = req.body
             const product = await Product.find({ title: { $regex: productName, $options: 'i' } })
+                .populate({ path: 'category', select: 'title' })
             // option 'i' => không phân biệt hoa thường
 
             if (Object.keys(product).length === 0) {
@@ -258,6 +268,7 @@ class ProductController {
             }
 
             const product = await Product.find({ title: { $regex: productName.trim(), $options: 'i' } })
+                .populate({ path: 'category', select: 'title' })
 
             if (Object.keys(product).length === 0) {
                 return res.status(200).json({ mess: 'Không tìm thấy sản phẩm' })

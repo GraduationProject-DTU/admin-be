@@ -348,6 +348,25 @@ class BlogController {
         }
     }
 
+    // [DELETE] /comment-blog
+    async deleteCommentBlog(req, res) {
+        const { commentId, blogId } = req.body
+        try {
+            const blog = await Blog.findById({ _id: blogId })
+            const updatedArr = blog?.comments.filter(obj => obj._id.toString() !== commentId);
+
+            await Blog.findByIdAndUpdate(
+                { _id: blogId },
+                { $set: { comments: updatedArr } }
+            )
+
+            return res.status(200).json({ mess: 'Delete Comment Successfully!!' })
+
+        } catch (error) {
+            res.status(500).json({ mess: error })
+        }
+    }
+
 }
 
 module.exports = new BlogController
