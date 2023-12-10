@@ -100,7 +100,7 @@ class BlogController {
                     }
                 })
                 .populate({ path: 'category', select: 'title' })
-                .populate({ path: 'author', select: 'firstname lastname avatar' })
+                .populate({ path: 'author', select: 'firstname lastname avatar email' })
 
             res.status(200).json({ blog })
         } catch (error) {
