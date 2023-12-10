@@ -223,15 +223,6 @@ class ProductController {
         }
     }
 
-    // async deleteCommentProduct (req ,req) {
-    //     const {pid , }
-    //     try {
-
-    //     } catch (error) {
-
-    //     }
-    // }
-
     //[POST]/products/find
     async findProduct(req, res) {
         try {
