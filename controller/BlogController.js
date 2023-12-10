@@ -58,9 +58,7 @@ class BlogController {
                         select: 'firstname lastname'
                     }
                 })
-            // .populate({ path: 'category', select: 'title' })
-
-            // .populate({ path: 'userId', select: 'lastname' })
+                .populate({ path: 'author', select: 'firstname lastname avatar' })
 
             res.status(200).json({ blog })
         } catch (error) {
@@ -110,10 +108,11 @@ class BlogController {
                     path: 'comments',
                     populate: {
                         path: 'userId',
-                        select: 'firstname lastname'
+                        select: 'firstname lastname avatar'
                     }
                 })
                 .populate({ path: 'category', select: 'title' })
+                .populate({ path: 'author', select: 'firstname lastname avatar' })
 
             res.status(200).json({ blog })
         } catch (error) {
@@ -126,6 +125,7 @@ class BlogController {
     async createBlog(req, res) {
         try {
             req.body.images = []
+            const { _id } = req.user
 
             console.log(req.body);
             if (Object.keys(req.body).length === 0) {
@@ -148,7 +148,7 @@ class BlogController {
                 }
             }
 
-            const blog = new Blog(req.body)
+            const blog = new Blog({ ...req.body, author: _id })
             await blog.save()
 
             return res.status(200).json({ mess: 'Create successfully', blog })
