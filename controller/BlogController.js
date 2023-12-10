@@ -4,8 +4,7 @@ const cloudinary = require('cloudinary')
 require('dotenv').config()
 
 class BlogController {
-
-    //skip , limit 
+    //skip , limit
     //[GET] /blogs/
     async getBlogs(req, res) {
         try {
@@ -17,11 +16,7 @@ class BlogController {
 
             if (page) {
                 const totalPage = await Blog.find()
-                blogs = await Blog
-                    .find()
-                    .skip(skip)
-                    .limit(limit)
-                    .populate({ path: 'category', select: 'title' })
+                blogs = await Blog.find().skip(skip).limit(limit).populate({ path: 'category', select: 'title' })
 
                 return res.status(200).json({
                     pageTotal: Math.ceil(totalPage.length / limit),
@@ -29,16 +24,13 @@ class BlogController {
                     blogs
                 })
             } else {
-                blogs = await Blog.find()
-                    .populate({ path: 'category', select: 'title' })
+                blogs = await Blog.find().populate({ path: 'category', select: 'title' })
 
                 return res.status(200).json({
                     recordTotal: blogs.length,
                     blogs
                 })
             }
-
-
         } catch (error) {
             res.status(500).json({ mess: error })
         }
@@ -78,8 +70,7 @@ class BlogController {
             const limit = process.env.LIMIT
             const skip = page * limit - limit
 
-            const blog = await Blog
-                .find({ title: { $regex: blogName, $options: 'i' } })
+            const blog = await Blog.find({ title: { $regex: blogName, $options: 'i' } })
                 .limit(limit)
                 .skip(skip)
             // option 'i' => không phân biệt hoa thường
@@ -102,15 +93,12 @@ class BlogController {
         // inc view
         try {
             //Gọi API => numberView + 1
-            const blog = await Blog.findByIdAndUpdate(
-                { _id: req.params.id },
-                { $inc: { numberViews: 1 } }
-            )
+            const blog = await Blog.findByIdAndUpdate({ _id: req.params.id }, { $inc: { numberViews: 1 } })
                 .populate({
                     path: 'comments',
                     populate: {
                         path: 'userId',
-                        select: 'firstname lastname'
+                        select: 'firstname lastname avatar'
                     }
                 })
                 .populate({ path: 'category', select: 'title' })
@@ -121,20 +109,19 @@ class BlogController {
         }
     }
 
-
     //[POST] /blogs/create-blog
     async createBlog(req, res) {
         try {
             req.body.images = []
 
-            console.log(req.body);
+            console.log(req.body)
             if (Object.keys(req.body).length === 0) {
                 if (req.files) {
                     for (let i = 0; i < req.files.length; i++) {
                         console.log(req.files[i].filename)
                         cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
                             if (err) {
-                                console.log({ 'err': err })
+                                console.log({ err: err })
                             }
                         })
                     }
@@ -152,7 +139,6 @@ class BlogController {
             await blog.save()
 
             return res.status(200).json({ mess: 'Create successfully', blog })
-
         } catch (error) {
             if (req.files) {
                 for (let i = 0; i < req.files.length; i++) {
@@ -201,7 +187,7 @@ class BlogController {
                         console.log(req.files[i].filename)
                         cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
                             if (err) {
-                                console.log({ 'err': err })
+                                console.log({ err: err })
                             }
                         })
                     }
@@ -229,7 +215,7 @@ class BlogController {
                     console.log(req.files[i].filename)
                     cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
                         if (err) {
-                            console.log({ 'err': err })
+                            console.log({ err: err })
                         }
                     })
                 }
@@ -254,14 +240,13 @@ class BlogController {
         try {
             const { blogId } = req.body
             const { _id } = req.user
-            console.log(_id);
+            console.log(_id)
             const blog = await Blog.findById({ _id: blogId })
 
-            //check user đã like hay chưa 
-            const userLiked = blog?.likes.find(e => e.toString() === _id)
+            //check user đã like hay chưa
+            const userLiked = blog?.likes.find((e) => e.toString() === _id)
             //check user disliked hay chưa
-            const userDisliked = blog?.disLikes.find(e => e.toString() === _id)
-
+            const userDisliked = blog?.disLikes.find((e) => e.toString() === _id)
 
             if (userDisliked) {
                 // Nếu có dislike thì hủy dislike => like
@@ -293,10 +278,10 @@ class BlogController {
             const { _id } = req.user
             const blog = await Blog.findById({ _id: blogId })
 
-            //check user đã like hay chưa 
-            const userLiked = blog?.likes.find(e => e.toString() === _id)
+            //check user đã like hay chưa
+            const userLiked = blog?.likes.find((e) => e.toString() === _id)
             //check user disliked hay chưa
-            const userDisliked = blog?.disLikes.find(e => e.toString() === _id)
+            const userDisliked = blog?.disLikes.find((e) => e.toString() === _id)
 
             if (userLiked) {
                 // hủy like rồi mới dislike
@@ -310,7 +295,6 @@ class BlogController {
                 // thêm dislike
                 await Blog.findByIdAndUpdate(blogId, { $push: { disLikes: _id } })
             }
-
 
             res.status(200).json({ mess: 'Dislike successfully' })
         } catch (error) {
@@ -330,16 +314,15 @@ class BlogController {
             let year = date.getFullYear()
             let formattedDate = day + '/' + month + '/' + year
 
-            const blog = await Blog.findByIdAndUpdate(
-                { _id: bid },
-                { $push: { comments: { userId: _id, content: comment, date: formattedDate } } }
-            ).populate({
-                path: 'comments',
-                populate: {
-                    path: 'userId',
-                    select: 'firstname lastname'
-                }
-            }).select('comments')
+            const blog = await Blog.findByIdAndUpdate({ _id: bid }, { $push: { comments: { userId: _id, content: comment, date: formattedDate } } })
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'userId',
+                        select: 'firstname lastname'
+                    }
+                })
+                .select('comments')
 
             console.log(blog)
             res.status(200).json({ mess: 'comment successfully!!', data: blog })
@@ -353,20 +336,15 @@ class BlogController {
         const { commentId, blogId } = req.body
         try {
             const blog = await Blog.findById({ _id: blogId })
-            const updatedArr = blog?.comments.filter(obj => obj._id.toString() !== commentId);
+            const updatedArr = blog?.comments.filter((obj) => obj._id.toString() !== commentId)
 
-            await Blog.findByIdAndUpdate(
-                { _id: blogId },
-                { $set: { comments: updatedArr } }
-            )
+            await Blog.findByIdAndUpdate({ _id: blogId }, { $set: { comments: updatedArr } })
 
             return res.status(200).json({ mess: 'Delete Comment Successfully!!' })
-
         } catch (error) {
             res.status(500).json({ mess: error })
         }
     }
-
 }
 
-module.exports = new BlogController
+module.exports = new BlogController()

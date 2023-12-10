@@ -14,7 +14,6 @@ router.delete('/delete-blog/:id', [verifyToken, isAdmin], BlogController.deleteB
 router.post('/like-blog', verifyToken, BlogController.likeBlog)
 router.post('/dislike-blog', verifyToken, BlogController.disLikeBlog)
 router.post('/comment-blog', verifyToken, BlogController.commentBlog)
-router.delete('/comment-blog', [verifyToken, isAdmin], BlogController.deleteCommentBlog)
-
+router.post('/delete-comment-blog', [verifyToken, isAdmin], BlogController.deleteCommentBlog)
 
 module.exports = router
