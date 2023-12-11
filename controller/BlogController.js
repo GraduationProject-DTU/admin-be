@@ -10,7 +10,7 @@ class BlogController {
         try {
             //PAGINATION
             const page = req.query.page
-            const limit = process.env.LIMIT
+            const limit = 6
             const skip = page * limit - limit
             let blogs
 
@@ -73,7 +73,7 @@ class BlogController {
 
             //pagination
             const page = req.query.page
-            const limit = process.env.LIMIT
+            const limit = 6
             const skip = page * limit - limit
 
             const blog = await Blog.find({ title: { $regex: blogName, $options: 'i' } })
@@ -122,12 +122,9 @@ class BlogController {
         try {
             req.body.images = []
             const { _id } = req.user
-
-            console.log(req.body)
             if (Object.keys(req.body).length === 0) {
                 if (req.files) {
                     for (let i = 0; i < req.files.length; i++) {
-                        console.log(req.files[i].filename)
                         cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
                             if (err) {
                                 console.log({ err: err })
