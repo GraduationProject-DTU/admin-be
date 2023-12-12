@@ -10,13 +10,16 @@ class BlogController {
         try {
             //PAGINATION
             const page = req.query.page
-            const limit = process.env.LIMIT
+            const limit = 6
             const skip = page * limit - limit
             let blogs
 
             if (page) {
                 const totalPage = await Blog.find()
-                blogs = await Blog.find().skip(skip).limit(limit).populate({ path: 'category', select: 'title' })
+                blogs = await Blog.find().skip(skip).limit(limit)
+                    .populate({ path: 'category', select: 'title' })
+                    .populate({ path: 'author', select: 'firstname lastname avatar' })
+
 
                 return res.status(200).json({
                     pageTotal: Math.ceil(totalPage.length / limit),
@@ -24,7 +27,10 @@ class BlogController {
                     blogs
                 })
             } else {
-                blogs = await Blog.find().populate({ path: 'category', select: 'title' })
+                blogs = await Blog.find()
+                    .populate({ path: 'category', select: 'title' })
+                    .populate({ path: 'author', select: 'firstname lastname avatar' })
+
 
                 return res.status(200).json({
                     recordTotal: blogs.length,
@@ -47,10 +53,12 @@ class BlogController {
                     path: 'comments',
                     populate: {
                         path: 'userId',
-                        select: 'firstname lastname'
+                        select: 'firstname lastname avatar'
                     }
                 })
                 .populate({ path: 'author', select: 'firstname lastname avatar' })
+
+
 
             res.status(200).json({ blog })
         } catch (error) {
@@ -65,7 +73,7 @@ class BlogController {
 
             //pagination
             const page = req.query.page
-            const limit = process.env.LIMIT
+            const limit = 6
             const skip = page * limit - limit
 
             const blog = await Blog.find({ title: { $regex: blogName, $options: 'i' } })
@@ -102,6 +110,7 @@ class BlogController {
                 .populate({ path: 'category', select: 'title' })
                 .populate({ path: 'author', select: 'firstname lastname avatar email' })
 
+
             res.status(200).json({ blog })
         } catch (error) {
             res.status(500).json({ mess: error })
@@ -113,12 +122,9 @@ class BlogController {
         try {
             req.body.images = []
             const { _id } = req.user
-
-            console.log(req.body)
             if (Object.keys(req.body).length === 0) {
                 if (req.files) {
                     for (let i = 0; i < req.files.length; i++) {
-                        console.log(req.files[i].filename)
                         cloudinary.uploader.destroy(req.files[i].filename, (err, result) => {
                             if (err) {
                                 console.log({ err: err })

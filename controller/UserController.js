@@ -121,8 +121,6 @@ class UserController {
         const { pid } = req.body
         try {
             const cart = await Product.findById({ _id: pid })
-
-            console.log(cart);
         } catch (error) {
             return res.status(500).json({ error })
         }

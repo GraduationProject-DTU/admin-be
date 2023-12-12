@@ -23,12 +23,14 @@ var Order = new mongoose.Schema({
         type: String,
     },
 
+
     products: [{
         product: {
             type: mongoose.Types.ObjectId,
             ref: 'Product',
         },
-        quatity: String
+        quatity: String,
+        address: String
     }],
 
 

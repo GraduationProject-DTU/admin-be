@@ -33,34 +33,17 @@ class OrderController {
                         select: 'title price image'
                     }
                 })
-                .populate({ path: 'orderBy', select: 'firstname lastname email phone adress' })
+                .populate({ path: 'orderBy', select: 'firstname lastname email phone address' })
             return res.status(200).json({ order })
         } catch (error) {
             return res.status(500).json({ error })
         }
     }
 
-    // [POST]/order/placeOrders
-    // async placeOrders(req, res) {
-    //     try {
-    //         const { pid, total } = req.body
-    //         const { _id } = req.user
-
-    //         const product = await Product.findById({ _id: pid })
-
-    //         const order = new Order({ products: product._id, orderBy: _id })
-    //         await order.save()
-
-    //         return res.status(200).json({ mess: 'Create successfully' })
-    //     } catch (error) {
-    //         return res.status(500).json({ mess: error })
-    //     }
-    // }
-
     async placeOrders(req, res) {
         try {
             const orders = req.body
-            const payment = req.body.payment
+            // const payment = req.body.payment
             const { _id } = req.user
             let productContain = []
             let price = 0
@@ -77,14 +60,25 @@ class OrderController {
             const orderPromises = orders.map(async (order) => {
                 const { pid, quatity } = order
 
-                const product = await Product.findById({ _id: pid })
+                //update lại sold
+                const product = await Product.findByIdAndUpdate({ _id: pid }, { $inc: { sold: 1 } })
+
                 productContain.push({ product: pid, quatity })
                 price = price + product.price * quatity
             })
 
             await Promise.all(orderPromises)
 
-            const newOrder = new Order({ products: productContain, codeBill: code, payments: payment, orderBy: _id, total: price })
+            if (orders[0].address) {
+                await User.findByIdAndUpdate(
+                    { _id },
+                    {
+                        $set: { address: orders[0].address }
+                    }
+                )
+            }
+
+            const newOrder = new Order({ products: productContain, codeBill: code, payments: orders[0].payment, orderBy: _id, total: price })
             await newOrder.save()
 
             return res.status(200).json({ mess: 'Create successfully' })

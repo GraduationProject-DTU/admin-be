@@ -51,7 +51,8 @@ var User = new mongoose.Schema(
         ],
 
         address: {
-            type: String
+            type: String,
+            default: ''
         },
 
         historyLiked: [

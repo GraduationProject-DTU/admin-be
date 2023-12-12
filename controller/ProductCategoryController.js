@@ -1,6 +1,6 @@
 const ProductCategory = require('../model/ProductCategory')
-const Product = require("../model/Product");
-
+const Product = require("../model/Product")
+const Order = require("../model/Order")
 class ProductCategoryController {
 
     //[GET] /category-products/
@@ -22,6 +22,42 @@ class ProductCategoryController {
             return res.status(200).json({ category })
         } catch (error) {
             return res.status(500).json({ error })
+        }
+    }
+
+    //[GET] /statistic
+    async statisticCategory(req, res) {
+        try {
+            const categories = await ProductCategory.find({})
+            const orders = await Order.find({}).populate({ path: 'products', populate: { path: 'product', select: 'price sold category title' } })
+
+            let result = []
+            for (let cate = 0; cate < categories.length; cate++) {
+                for (let i = 0; i < orders.length; i++) {
+                    orders[i].products.filter(e => {
+                        if (e?.product?.category.toString() === categories[cate]._id.toString()) {
+                            result.push({ category: categories[cate]._id, date: orders[i]?.createdAt, sold: e?.product?.sold, price: e?.product?.price })
+                        }
+                    })
+                }
+            }
+
+
+            const report = categories.map(e => {
+                return {
+                    [e.title]: [result.filter((value,) => {
+                        if (value.category === e._id) {
+                            return value
+                        } else {
+                            return undefined
+                        }
+                    })]
+                }
+            })
+
+            res.status(200).json({ report })
+        } catch (error) {
+            res.status(500).json({ mess: error })
         }
     }
 
@@ -58,7 +94,7 @@ class ProductCategoryController {
         }
     }
 
-    //[DELETE] / /category-products//delete-category/:id
+    //[DELETE] /category-products//delete-category/:id
     async deleteCategoryProduct(req, res) {
         try {
             await ProductCategory.findByIdAndDelete(req.params.id)
