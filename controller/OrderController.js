@@ -61,7 +61,10 @@ class OrderController {
 
             const orderPromises = orders.map(async (order) => {
                 const { pid, quatity } = order
-                const product = await Product.findById({ _id: pid })
+
+                //update lại sold
+                const product = await Product.findByIdAndUpdate({ _id: pid }, { $inc: { sold: 1 } })
+
                 productContain.push({ product: pid, quatity })
                 price = price + product.price * quatity
             })
