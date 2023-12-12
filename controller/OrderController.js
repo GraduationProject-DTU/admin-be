@@ -14,7 +14,7 @@ class OrderController {
                         select: 'title price'
                     }
                 })
-                .populate({ path: 'orderBy', select: 'firstname lastname email phone adress' })
+                .populate({ path: 'orderBy', select: 'firstname lastname email phone adress avatar' })
             return res.status(200).json({ order })
         } catch (error) {
             return res.status(500).json({ mess: error })
