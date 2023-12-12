@@ -78,6 +78,10 @@ class OrderController {
                 )
             }
 
+            if (orders[0].coupon) {
+                price = price - (price * orders[0].coupon)
+            }
+
             const newOrder = new Order({ products: productContain, codeBill: code, payments: orders[0].payment, orderBy: _id, total: price })
             await newOrder.save()
 
