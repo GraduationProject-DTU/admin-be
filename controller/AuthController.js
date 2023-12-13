@@ -27,7 +27,7 @@ class AuthController {
 
 
 
-            const genSalt = await bcrypt.genSaltSync(10)
+            const genSalt = await bcrypt.genSalt(10)
             const hashPassword = await bcrypt.hash(password, genSalt)
 
             const newUser = await new User({
@@ -168,6 +168,30 @@ class AuthController {
 
             res.status(200).json({ accessToken: newAccessToken })
         })
+    }
+
+    async changePassword(req, res) {
+        try {
+            const { newPassword, oldPassword, uid } = req.body
+
+            const user = await User.findById({ _id: uid })
+
+
+            //compare password
+            const passwordCompare = await bcrypt.compare(oldPassword, user.password)
+            if (!passwordCompare) {
+                return res.status(400).json({ mess: 'Mật khẩu hiện tại không đúng' })
+            }
+
+            // hash new password and save into db
+            const genSalt = await bcrypt.genSalt(10)
+            const hashPassword = await bcrypt.hash(newPassword, genSalt)
+            await User.findByIdAndUpdate({ _id: uid }, { $set: { password: hashPassword } })
+
+            res.status(200).json({ mess: 'Đổi mật khẩu thành công' })
+        } catch (error) {
+            res.status(500).json({ error: error })
+        }
     }
 
     async logout(req, res) {
