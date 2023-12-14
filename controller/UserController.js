@@ -2,6 +2,7 @@ const User = require('../model/User')
 const Product = require('../model/Product')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
+const contact = require('../utils/contact')
 class UserController {
     // [Get] / users/
     async getAllUsers(req, res) {
@@ -63,6 +64,24 @@ class UserController {
             }
 
             return res.status(200).json({ mess: 'Add Wish Product Successfully !' })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+    async deleteWishList(req, res) {
+        try {
+            const { pid } = req.body
+            const { _id } = req.user
+            const user = await User.findById({ _id })
+            const checkWishProduct = user?.wishlist.find(e => e.toString() === pid)
+
+            if (!checkWishProduct) {
+                return res.status(400).json({ mess: 'Không tồn tại' })
+            }
+
+            await User.findByIdAndUpdate({ _id }, { $pull: { wishlist: pid } })
+            return res.status(200).json({ mess: 'Delete Wish Product Successfully !' })
         } catch (error) {
             return res.status(500).json({ error })
         }
@@ -160,6 +179,23 @@ class UserController {
             //Tiến hành remove product
             await User.findByIdAndUpdate(_id, { $pull: { cart: { product: pid } } })
             res.status(200).json({ mess: 'remove product successfully!' })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+    async contact(req, res) {
+        try {
+            const { email, text } = req.body
+
+            const data = {
+                email,
+                text
+            }
+            await contact(data)
+
+            res.status(200).json({ mess: 'Gửi thành công' })
+
         } catch (error) {
             return res.status(500).json({ error })
         }
