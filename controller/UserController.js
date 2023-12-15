@@ -71,7 +71,7 @@ class UserController {
 
     async deleteWishList(req, res) {
         try {
-            const { pid } = req.body
+            const { pid } = req.params
             const { _id } = req.user
             const user = await User.findById({ _id })
             const checkWishProduct = user?.wishlist.find(e => e.toString() === pid)
