@@ -15,5 +15,6 @@ router.post('/like-blog', verifyToken, BlogController.likeBlog)
 router.post('/dislike-blog', verifyToken, BlogController.disLikeBlog)
 router.post('/comment-blog', verifyToken, BlogController.commentBlog)
 router.post('/delete-comment-blog', [verifyToken, isAdmin], BlogController.deleteCommentBlog)
+router.delete('/comment/:bid/:commentId', [verifyToken], BlogController.deleteCommentBlogByUser)
 
 module.exports = router

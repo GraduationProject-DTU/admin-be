@@ -351,6 +351,31 @@ class BlogController {
             res.status(500).json({ mess: error })
         }
     }
+
+    // [DELETE] /comment-blog
+    async deleteCommentBlogByUser(req, res) {
+        try {
+            const { _id } = req.user
+            const { bid, commentId } = req.params
+
+            const blog = await Blog.findById({ _id: bid })
+            const checkRole = blog?.comments.find(e => e._id.toString() === commentId && e.userId.toString() === _id)
+
+            if (checkRole) {
+                const updatedArr = blog?.comments.filter((e) => {
+                    return e._id.toString() !== commentId
+
+                })
+                await Blog.findByIdAndUpdate({ _id: bid }, { $set: { comments: updatedArr } })
+                return res.status(200).json({ mess: 'Delete Comment Successfully!!' })
+            } else {
+                return res.status(400).json({ mess: 'Bạn không có quyền xóa !!' })
+            }
+
+        } catch (error) {
+            res.status(500).json({ mess: error })
+        }
+    }
 }
 
 module.exports = new BlogController()
