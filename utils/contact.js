@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const contact = async (data) => {
     const { email, text } = data
+    console.log(data)
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -18,7 +19,7 @@ const contact = async (data) => {
     let info = await transporter.sendMail({
         from: email,
         to: process.env.EMAIL,
-        subject: "Messenger From Client !",
+        subject: `SHOP ROSE ! Messenger From ${email}`,
         text: text,
         html: ''
     });
