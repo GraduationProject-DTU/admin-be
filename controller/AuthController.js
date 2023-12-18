@@ -172,9 +172,10 @@ class AuthController {
 
     async changePassword(req, res) {
         try {
-            const { newPassword, oldPassword, uid } = req.body
+            const { newPassword, oldPassword } = req.body
+            const { _id } = req.user
 
-            const user = await User.findById({ _id: uid })
+            const user = await User.findById({ _id })
 
 
             //compare password
@@ -186,7 +187,7 @@ class AuthController {
             // hash new password and save into db
             const genSalt = await bcrypt.genSalt(10)
             const hashPassword = await bcrypt.hash(newPassword, genSalt)
-            await User.findByIdAndUpdate({ _id: uid }, { $set: { password: hashPassword } })
+            await User.findByIdAndUpdate({ _id }, { $set: { password: hashPassword } })
 
             res.status(200).json({ mess: 'Đổi mật khẩu thành công' })
         } catch (error) {
