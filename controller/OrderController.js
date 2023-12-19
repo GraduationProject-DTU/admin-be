@@ -11,7 +11,7 @@ class OrderController {
                     path: 'products',
                     populate: {
                         path: 'product',
-                        select: 'title price'
+                        select: 'title price image'
                     }
                 })
                 .populate({ path: 'orderBy', select: 'firstname lastname email phone adress avatar' })
