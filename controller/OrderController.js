@@ -153,7 +153,23 @@ class OrderController {
         try {
             const { oid } = req.params
 
-            await Order.findByIdAndDelete({ _id: oid })
+            const products = await Product.find({})
+            const order = await Order.findById({ _id: oid })
+
+            // const demo = 
+
+            await Promise.all(order.products.map(async (orderItem) => {
+                const foundProduct = products.find(prod => prod?._id.toString() === orderItem?.product.toString());
+
+                if (foundProduct) {
+
+                    await Product.findByIdAndUpdate({ _id: foundProduct?._id }, { $inc: { sold: -orderItem.quatity, quantity: orderItem.quatity } })
+                }
+            }));
+
+
+
+            // await Order.findByIdAndDelete({ _id: oid })
             return res.status(200).json({ mess: 'Delete Successfully' })
         } catch (error) {
             return res.status(500).json({ mess: error })
