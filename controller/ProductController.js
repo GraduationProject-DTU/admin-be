@@ -177,12 +177,12 @@ class ProductController {
             const orders = await Order.find({})
 
             const userPurchased = orders?.find(e => e?.products.find(e => e?.product?._id.toString() === postId))
-            const userOrdered = userPurchased?.orderBy?._id.toString() === _id
-
+            const userOrdered = userPurchased?.orderBy?._id.toString() === _id && userPurchased?.status === 'Succeeded'
 
 
 
             const product = await Product.findById({ _id: postId })
+
             const readyRating = product?.ratings?.find((e) => e?.postedBy.toString() === _id)
 
             if (!userOrdered || !userPurchased) {
