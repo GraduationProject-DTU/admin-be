@@ -169,7 +169,7 @@ class OrderController {
 
 
 
-            // await Order.findByIdAndDelete({ _id: oid })
+            await Order.findByIdAndDelete({ _id: oid })
             return res.status(200).json({ mess: 'Delete Successfully' })
         } catch (error) {
             return res.status(500).json({ mess: error })
