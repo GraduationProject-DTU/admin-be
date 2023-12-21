@@ -19,7 +19,7 @@ class UserController {
     //[GET]/user/detail-user
     async getUserById(req, res) {
         try {
-            const user = await User.findById({ _id: req.user._id })
+            const user = await User.findById({ _id: req.params.id })
             return res.status(200).json({ user })
         } catch (error) {
             return res.status(500).json({ error })
@@ -74,7 +74,7 @@ class UserController {
             const { pid } = req.params
             const { _id } = req.user
             const user = await User.findById({ _id })
-            const checkWishProduct = user?.wishlist.find(e => e.toString() === pid)
+            const checkWishProduct = user?.wishlist.find((e) => e.toString() === pid)
 
             if (!checkWishProduct) {
                 return res.status(400).json({ mess: 'Không tồn tại' })
@@ -195,7 +195,6 @@ class UserController {
             await contact(data)
 
             res.status(200).json({ mess: 'Gửi thành công' })
-
         } catch (error) {
             return res.status(500).json({ error })
         }
